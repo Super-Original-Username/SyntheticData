@@ -4,6 +4,7 @@
 #include <chrono>
 #include <cstdio>
 #include <string>
+#include <inttypes.h>
 
 #include "Source_Nav.h"
 #include "Source_NasaNavTxt.h"
@@ -441,8 +442,11 @@ bool ClSource_NasaNavTxt::ReadNextLine()
 
     // After data is copied then calculate any necessary derived parameters
     pclSimState->update(sPrefix+"AC_VEL_NORTH",   (double)(KTS2FPS(pclSimState->fState["GS"]) * sin(HDG2RAD(pclSimState->fState["AC_TRUE_HDG"]))));
+	//printf("groundspeed: %f \n", pclSimState->fState["GS"]);
+	//printf("forward velocity: %f \n",pclSimState)
     pclSimState->update(sPrefix+"AC_VEL_EAST",    (double)(KTS2FPS(pclSimState->fState["GS"]) * cos(HDG2RAD(pclSimState->fState["AC_TRUE_HDG"]))));
     pclSimState->update(sPrefix+"AC_VEL_DOWN",    (double)(-1.0 * pclSimState->fState["IVV"] / 60.0));
+	//printf("downward velocity: %f \n", pclSimState->fState["IVV"]);
     pclSimState->update(sPrefix+"AC_ACCEL_NORTH", (double)(G2FPS2(pclSimState->fState["FPAC"]) * sin(HDG2RAD(pclSimState->fState["AC_TRUE_HDG"]))));
     pclSimState->update(sPrefix+"AC_ACCEL_EAST",  (double)(G2FPS2(pclSimState->fState["FPAC"]) * cos(HDG2RAD(pclSimState->fState["AC_TRUE_HDG"]))));
 
