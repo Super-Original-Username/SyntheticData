@@ -48,7 +48,7 @@ if __name__ == "__main__":
         command_list.append(command)
 
     for i, ret in enumerate(pool.imap(partial(subprocess.run,capture_output=True),command_list)):
-        print("running command:",i)
-        if ret != 0:
-            print("{} command failed: {}".format(i,ret))
+        print(ret.stdout)
+        print(ret.stderr)
+
         
