@@ -10,6 +10,7 @@ Created on Tue May 11 16:09:47 2021
 
 import sys
 import os
+import argparse
 
 import nasa_mat
 
@@ -25,6 +26,11 @@ import nasa_mat
 
 if __name__=='__main__':
 
+    # set up an argument parser to simplify usage
+    # parser = argparse.ArgumentParser(description="Convert NASA matlab flight data to csv format")
+    # parser.add_argument('data_dir', metavar="Dataset root",nargs=1,type=str,help="Parent directory containing matlab file directory and csv output directory")
+    # parser.add_argument('input_files',)
+
     # Make our NASA Matlab class    
     nm = nasa_mat.NasaMat()
     
@@ -33,23 +39,32 @@ if __name__=='__main__':
     dataset_dir    = None
     data_file_list = None
  
-    # If no command line parameters then use these
-    if len(sys.argv) < 2:
-        dataset_dir = "Tail_652_1"
-        data_file_list = ("652200101120916.mat",)   # File OK
-#        dataset_dir = "Tail_652_2/"
-#        data_file_list = ("652200108031352.mat",)   # File Broken
+    # Unused
+#     # If no command line parameters then use these
+#     if len(sys.argv) < 2:
+#         dataset_dir = "Tail_652_1"
+#         data_file_list = ("652200101120916.mat",)   # File OK
+# #        dataset_dir = "Tail_652_2/"
+# #        data_file_list = ("652200108031352.mat",)   # File Broken
 
     # Get the working directory name
     if len(sys.argv) >= 2:
         dataset_dir = sys.argv[1] + "/"
         
-    matlab_data_dir = root_data_dir + "Matlab/" + dataset_dir
-    csv_data_dir    = root_data_dir + "CSV/"    + dataset_dir
+    matlab_data_dir = os.path.join(dataset_dir,"Matlab/")
+    csv_data_dir    = os.path.join(dataset_dir,"CSV/")
     
-    # Get the file names list
-    if len(sys.argv) >= 3:
-        data_file_list = { sys.argv[2] }
+    # # Get the file names list
+    # if len(sys.argv) >= 4:
+    #     data_file_list = { sys.argv[3] }
+
+    # limit_cols = True # by default, only take the fields used by the original SynthCh10 program
+
+    # # if false, reads all columns from csv (not super functional atm)
+
+    # if len(sys.argv) >= 3:
+    #     limit_cols = {"true": True, "false": False}[sys.argv[2].lower()]
+
 
     # If there is no file names list then make one
     if data_file_list == None:
@@ -64,7 +79,9 @@ if __name__=='__main__':
 
     # SynthCh10Gen uses these fields
     # "LATP" "LONP" "ALT" "TAS" "TH" "MH" "PTCH" "ROLL" "AOAC" "VRTG"
-    write_cols = None
+    # if not limit_cols:
+    #     write_cols = None
+    # else:
     write_cols = { "LATP", "LONP", "ALT", "TAS", "TH", "MH", "PTCH", "ROLL", "AOAC", "VRTG", "GS", "IVV", "FPAC" }
 
     # Iterate over the list of files to (maybe) process
@@ -120,7 +137,7 @@ if __name__=='__main__':
                     
                     # Write it out
                     print(" - write {0}".format(output_data_filename))
-                    nm.nasa_frame.to_csv(output_data_filename,index_label="DATE_TIME", columns=write_cols)
+                    nm.nasa_frame.to_csv(output_data_filename,index_label="DATE_TIME",columns=write_cols)
 #                   nm.nasa_frame.to_parquet(data_filename_root+output_filename_ext)
 #                   nm.nasa_frame.to_hdf(data_filename_root+output_filename_ext, "data_"+data_filename_base, mode="w", complevel=1)
             
